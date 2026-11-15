@@ -1,0 +1,16 @@
+relationship 9a97bd59-2bbc-5daf-88bd-ef36fb656c16
+	fromColumn: Statement.CardholderKey
+	toColumn: Cardholder.CardholderKey
+
+relationship 454b9db4-d2d2-5891-aa7e-57287e7a5876
+	fromColumn: Statement.Month
+	toColumn: Month.Date
+
+relationship 5eecb724-4d3c-5dd7-902d-1814fc5cabd2
+	fromColumn: Statement.Bucket
+	toColumn: Bucket.Bucket
+
+relationship a0425e93-015d-5912-8e64-1938e1890331
+	fromColumn: 'Roll Rate'.Month
+	toColumn: Month.Date
+

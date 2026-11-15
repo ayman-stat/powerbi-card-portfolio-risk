@@ -1,0 +1,303 @@
+/// All report measures, organised in display folders.
+table KPI
+
+	measure Cardholders = COUNTROWS('Cardholder')
+		formatString: #,0
+		displayFolder: 1 Portfolio
+
+	/// Total credit lines, NT$.
+	measure 'Credit Lines' = SUM('Cardholder'[CreditLimit])
+		formatString: #,0
+		displayFolder: 1 Portfolio
+
+	/// Share of cardholders who defaulted in Oct 2005.
+	measure 'Default Rate' = AVERAGE('Cardholder'[Default])
+		formatString: 0.0%
+		displayFolder: 1 Portfolio
+
+	/// Statement balances in the latest selected month, NT$.
+	measure Balances = VAR _m = MAX('Month'[Date]) RETURN CALCULATE(SUM('Statement'[Balance]), 'Month'[Date] = _m)
+		formatString: #,0
+		displayFolder: 1 Portfolio
+
+	/// Balances / credit lines in the latest selected month.
+	measure Utilisation = VAR _m = MAX('Month'[Date]) RETURN DIVIDE(CALCULATE(SUM('Statement'[Balance]), 'Month'[Date] = _m), CALCULATE(SUM('Statement'[Limit]), 'Month'[Date] = _m))
+		formatString: 0.0%
+		displayFolder: 1 Portfolio
+
+	measure 'Statement Balances' = SUM('Statement'[Balance])
+		formatString: #,0
+		displayFolder: 1 Portfolio
+
+	measure Payments = SUM('Statement'[Payment])
+		formatString: #,0
+		displayFolder: 1 Portfolio
+
+	/// Payments received as a share of balances.
+	measure 'Payment Rate' = DIVIDE([Payments], [Statement Balances])
+		formatString: 0.0%
+		displayFolder: 1 Portfolio
+
+	measure Statements = COUNTROWS('Statement')
+		formatString: #,0
+		displayFolder: 2 Delinquency
+
+	/// Share of statements 1+ month late.
+	measure 'Delinquency 30+' = DIVIDE(CALCULATE([Statements], 'Statement'[Delinquent] = 1), [Statements])
+		formatString: 0.0%
+		displayFolder: 2 Delinquency
+
+	measure 'Delinquency 60+' = DIVIDE(CALCULATE([Statements], 'Statement'[Bucket] IN {"2 months late", "3+ months late"}), [Statements])
+		formatString: 0.0%
+		displayFolder: 2 Delinquency
+
+	measure 'Latest 30+' = VAR _m = MAX('Month'[Date]) RETURN CALCULATE([Delinquency 30+], 'Month'[Date] = _m)
+		formatString: 0.0%
+		displayFolder: 2 Delinquency
+
+	/// October default rate by repayment status in the latest selected month.
+	measure 'Default Rate by Status' =
+			VAR _m = MAX('Month'[Date]) RETURN DIVIDE(CALCULATE(SUMX('Statement', RELATED('Cardholder'[Default])), 'Month'[Date] = _m),
+			       CALCULATE([Statements], 'Month'[Date] = _m))
+		formatString: 0%
+		displayFolder: 2 Delinquency
+
+	/// Share paying less than in full (revolving credit) in the latest month.
+	measure 'Revolving Share' = VAR _m = MAX('Month'[Date]) RETURN DIVIDE(CALCULATE([Statements], 'Statement'[Bucket] = "Revolving", 'Month'[Date] = _m), CALCULATE([Statements], 'Month'[Date] = _m))
+		formatString: 0%
+		displayFolder: 2 Delinquency
+
+	measure 'Bucket Share' = DIVIDE([Statements], CALCULATE([Statements], REMOVEFILTERS('Bucket')))
+		formatString: 0%
+		displayFolder: 2 Delinquency
+
+	/// Share of last month's status that moved to this month's status.
+	measure 'Roll Share' = DIVIDE(SUM('Roll Rate'[Cardholders]), CALCULATE(SUM('Roll Rate'[Cardholders]), REMOVEFILTERS('Roll Rate'[To], 'Roll Rate'[ToOrder])))
+		formatString: 0%
+		displayFolder: 2 Delinquency
+
+	/// Past due last month, current this month.
+	measure 'Cure Rate' =
+			DIVIDE(CALCULATE(SUM('Roll Rate'[Cardholders]), 'Roll Rate'[FromOrder] >= 4, 'Roll Rate'[ToOrder] <= 3),
+			       CALCULATE(SUM('Roll Rate'[Cardholders]), 'Roll Rate'[FromOrder] >= 4))
+		formatString: 0%
+		displayFolder: 2 Delinquency
+
+	/// Past due last month and still past due (or worse) this month.
+	measure 'Still Late Rate' =
+			DIVIDE(CALCULATE(SUM('Roll Rate'[Cardholders]), 'Roll Rate'[FromOrder] >= 4, 'Roll Rate'[ToOrder] >= 4),
+			       CALCULATE(SUM('Roll Rate'[Cardholders]), 'Roll Rate'[FromOrder] >= 4))
+		formatString: 0%
+		displayFolder: 2 Delinquency
+
+	/// Current last month, past due this month: the flow into delinquency.
+	measure 'Entry Rate' =
+			DIVIDE(CALCULATE(SUM('Roll Rate'[Cardholders]), 'Roll Rate'[FromOrder] <= 3, 'Roll Rate'[ToOrder] >= 4),
+			       CALCULATE(SUM('Roll Rate'[Cardholders]), 'Roll Rate'[FromOrder] <= 3))
+		formatString: 0.0%
+		displayFolder: 2 Delinquency
+
+	measure 'Test Accounts' = CALCULATE([Cardholders], 'Cardholder'[Sample] = "Test")
+		formatString: #,0
+		displayFolder: 3 Scorecard
+
+	measure 'Test Default Rate' = CALCULATE([Default Rate], 'Cardholder'[Sample] = "Test")
+		formatString: 0.0%
+		displayFolder: 3 Scorecard
+
+	measure 'Test Predicted PD' = CALCULATE(AVERAGE('Cardholder'[PD]), 'Cardholder'[Sample] = "Test")
+		formatString: 0.0%
+		displayFolder: 3 Scorecard
+
+	measure 'Test Defaults' = CALCULATE(SUM('Cardholder'[Default]), 'Cardholder'[Sample] = "Test")
+		formatString: #,0
+		displayFolder: 3 Scorecard
+
+	measure 'Test Goods' = [Test Accounts] - [Test Defaults]
+		formatString: #,0
+		displayFolder: 3 Scorecard
+
+	measure 'Driver Importance' = SUM('PD Drivers'[AUCDrop])
+		formatString: 0.000
+		displayFolder: 3 Scorecard
+
+	measure 'Defaults Captured' = SUM('Gains Curve'[DefaultsCapturedPct]) / 100
+		formatString: 0%
+		displayFolder: 3 Scorecard
+
+	measure 'Random Capture' = SUM('Gains Curve'[RandomPct]) / 100
+		formatString: 0%
+		displayFolder: 3 Scorecard
+
+	/// Hold-out AUC of the gradient-boosting scorecard.
+	measure 'PD AUC' = LOOKUPVALUE('Model Metrics'[Value], 'Model Metrics'[Metric], "pd_auc_test")
+		formatString: 0.00
+		displayFolder: 9 Model metrics
+
+	measure 'PD Gini' = LOOKUPVALUE('Model Metrics'[Value], 'Model Metrics'[Metric], "pd_gini_test")
+		formatString: 0.00
+		displayFolder: 9 Model metrics
+
+	/// Kolmogorov-Smirnov separation on the hold-out sample.
+	measure 'PD KS' = LOOKUPVALUE('Model Metrics'[Value], 'Model Metrics'[Metric], "pd_ks_test")
+		formatString: 0.00
+		displayFolder: 9 Model metrics
+
+	/// Hold-out AUC of a logistic-regression benchmark.
+	measure 'Logistic AUC' = LOOKUPVALUE('Model Metrics'[Value], 'Model Metrics'[Metric], "pd_auc_logit")
+		formatString: 0.00
+		displayFolder: 9 Model metrics
+
+	measure 'Cutoff Value' = SELECTEDVALUE('Score Cutoff'[Score Cutoff], 525)
+		formatString: 0
+		displayFolder: 4 Line strategy
+
+	measure 'LGD Value' = SELECTEDVALUE('Loss Given Default'[Loss Given Default], 0.75)
+		formatString: 0%
+		displayFolder: 4 Line strategy
+
+	/// Hold-out accounts scoring below the cutoff: candidates for a line decrease or early contact.
+	measure 'Actioned Accounts' = VAR _c = [Cutoff Value] RETURN CALCULATE(COUNTROWS('Cardholder'), 'Cardholder'[Sample] = "Test", 'Cardholder'[Score] < _c)
+		formatString: #,0
+		displayFolder: 4 Line strategy
+
+	measure 'Actioned Share' = DIVIDE([Actioned Accounts], [Test Accounts])
+		formatString: 0%
+		displayFolder: 4 Line strategy
+
+	/// Share of next-month defaults inside the actioned group.
+	measure 'Defaults Caught' = VAR _c = [Cutoff Value] RETURN DIVIDE(CALCULATE(SUM('Cardholder'[Default]), 'Cardholder'[Sample] = "Test", 'Cardholder'[Score] < _c), [Test Defaults])
+		formatString: 0%
+		displayFolder: 4 Line strategy
+
+	measure 'Bad Rate Actioned' = VAR _c = [Cutoff Value] RETURN CALCULATE(AVERAGE('Cardholder'[Default]), 'Cardholder'[Sample] = "Test", 'Cardholder'[Score] < _c)
+		formatString: 0%
+		displayFolder: 4 Line strategy
+
+	measure 'Bad Rate Kept' = VAR _c = [Cutoff Value] RETURN CALCULATE(AVERAGE('Cardholder'[Default]), 'Cardholder'[Sample] = "Test", 'Cardholder'[Score] >= _c)
+		formatString: 0.0%
+		displayFolder: 4 Line strategy
+
+	/// Customers who would not have defaulted but fall below the cutoff: the cost of the policy.
+	measure 'Good Accounts Actioned' = VAR _c = [Cutoff Value] RETURN CALCULATE(COUNTROWS('Cardholder'), 'Cardholder'[Sample] = "Test", 'Cardholder'[Score] < _c, 'Cardholder'[Default] = 0)
+		formatString: #,0
+		displayFolder: 4 Line strategy
+
+	/// PD x exposure at default x LGD, hold-out accounts, NT$.
+	measure 'Expected Loss' = CALCULATE(SUMX('Cardholder', 'Cardholder'[PD] * 'Cardholder'[ExposureAtDefault]), 'Cardholder'[Sample] = "Test") * [LGD Value]
+		formatString: #,0
+		displayFolder: 4 Line strategy
+
+	measure 'Expected Loss Actioned' =
+			VAR _c = [Cutoff Value] RETURN CALCULATE(SUMX('Cardholder', 'Cardholder'[PD] * 'Cardholder'[ExposureAtDefault]),
+			    'Cardholder'[Sample] = "Test", 'Cardholder'[Score] < _c) * [LGD Value]
+		formatString: #,0
+		displayFolder: 4 Line strategy
+
+	measure 'Expected Loss Share Actioned' = DIVIDE([Expected Loss Actioned], [Expected Loss])
+		formatString: 0%
+		displayFolder: 4 Line strategy
+
+	measure 'Fraud Transactions' = COUNTROWS('Fraud Test')
+		formatString: #,0
+		displayFolder: 5 Fraud
+
+	measure Frauds = SUM('Fraud Test'[IsFraud])
+		formatString: #,0
+		displayFolder: 5 Fraud
+
+	measure 'Fraud Amount' = CALCULATE(SUM('Fraud Test'[Amount]), 'Fraud Test'[IsFraud] = 1)
+		formatString: €#,0
+		displayFolder: 5 Fraud
+
+	/// Fraud share of transactions, both days.
+	measure 'Fraud Rate' = DIVIDE(CALCULATE(SUM('Fraud Hourly'[Transactions]), 'Fraud Hourly'[IsFraud] = 1), SUM('Fraud Hourly'[Transactions]))
+		formatString: 0.00%
+		displayFolder: 5 Fraud
+
+	/// Frauds per 10,000 transactions.
+	measure 'Fraud Basis Points' = [Fraud Rate] * 10000
+		formatString: 0.0
+		displayFolder: 5 Fraud
+
+	measure 'Fraud Share of Amount' = DIVIDE(CALCULATE(SUM('Fraud Hourly'[Amount]), 'Fraud Hourly'[IsFraud] = 1), SUM('Fraud Hourly'[Amount]))
+		formatString: 0.00%
+		displayFolder: 5 Fraud
+
+	measure 'Fraud ROC AUC' = LOOKUPVALUE('Model Metrics'[Value], 'Model Metrics'[Metric], "fraud_roc_auc")
+		formatString: 0.000
+		displayFolder: 9 Model metrics
+
+	/// Average precision: the right yardstick when fraud is 0.17% of transactions.
+	measure 'Fraud PR AUC' = LOOKUPVALUE('Model Metrics'[Value], 'Model Metrics'[Metric], "fraud_pr_auc")
+		formatString: 0.00
+		displayFolder: 9 Model metrics
+
+	/// Share of fraud caught when reviewing the riskiest 0.1% of transactions.
+	measure 'Recall at 0.1%' = LOOKUPVALUE('Model Metrics'[Value], 'Model Metrics'[Metric], "fraud_recall_at_0.1pct")
+		formatString: 0%
+		displayFolder: 9 Model metrics
+
+	measure 'Precision at 0.1%' = LOOKUPVALUE('Model Metrics'[Value], 'Model Metrics'[Metric], "fraud_precision_at_0.1pct")
+		formatString: 0%
+		displayFolder: 9 Model metrics
+
+	measure 'Review Share Value' = SELECTEDVALUE('Review Share'[Review Share], 0.1)
+		formatString: 0.00"%"
+		displayFolder: 5 Fraud
+
+	measure 'Review Cost Value' = SELECTEDVALUE('Review Cost'[Review Cost], 5)
+		formatString: €0
+		displayFolder: 5 Fraud
+
+	measure 'Sim Alerts' = LOOKUPVALUE('Alert Curve'[Alerts], 'Alert Curve'[ReviewPct], [Review Share Value])
+		formatString: #,0
+		displayFolder: 5 Fraud
+
+	measure 'Sim Frauds Caught' = LOOKUPVALUE('Alert Curve'[FraudsCaught], 'Alert Curve'[ReviewPct], [Review Share Value])
+		formatString: #,0
+		displayFolder: 5 Fraud
+
+	measure 'Sim Recall' = LOOKUPVALUE('Alert Curve'[Recall], 'Alert Curve'[ReviewPct], [Review Share Value])
+		formatString: 0%
+		displayFolder: 5 Fraud
+
+	measure 'Sim Precision' = LOOKUPVALUE('Alert Curve'[Precision], 'Alert Curve'[ReviewPct], [Review Share Value])
+		formatString: 0%
+		displayFolder: 5 Fraud
+
+	measure 'Sim Fraud Prevented' = LOOKUPVALUE('Alert Curve'[FraudAmountCaught], 'Alert Curve'[ReviewPct], [Review Share Value])
+		formatString: €#,0
+		displayFolder: 5 Fraud
+
+	measure 'Sim Review Cost' = [Sim Alerts] * [Review Cost Value]
+		formatString: €#,0
+		displayFolder: 5 Fraud
+
+	measure 'Sim Net Saving' = [Sim Fraud Prevented] - [Sim Review Cost]
+		formatString: €#,0;-€#,0
+		displayFolder: 5 Fraud
+
+	measure 'Curve Recall' = SUM('Alert Curve'[Recall])
+		formatString: 0%
+		displayFolder: 5 Fraud
+
+	measure 'Curve Precision' = SUM('Alert Curve'[Precision])
+		formatString: 0%
+		displayFolder: 5 Fraud
+
+	measure 'Curve Net Saving' = SUM('Alert Curve'[FraudAmountCaught]) - SUM('Alert Curve'[Alerts]) * [Review Cost Value]
+		formatString: €#,0
+		displayFolder: 5 Fraud
+
+	column Value
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: [Value]
+
+	partition KPI = calculated
+		mode: import
+		source =
+				{BLANK()}
+

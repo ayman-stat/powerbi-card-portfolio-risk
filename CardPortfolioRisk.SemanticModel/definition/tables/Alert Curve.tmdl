@@ -1,0 +1,55 @@
+/// Alert budget vs fraud caught on the forward test window.
+table 'Alert Curve'
+
+	/// Share of transactions sent for review, %
+	column ReviewPct
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: ReviewPct
+
+	column Alerts
+		dataType: int64
+		isHidden
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Alerts
+
+	column FraudsCaught
+		dataType: int64
+		isHidden
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: FraudsCaught
+
+	column Recall
+		dataType: double
+		isHidden
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: Recall
+
+	column Precision
+		dataType: double
+		isHidden
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: Precision
+
+	column FraudAmountCaught
+		dataType: double
+		isHidden
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: FraudAmountCaught
+
+	partition 'Alert Curve' = m
+		mode: import
+		source =
+				let
+				    Source = fnLoadCsv("fraud_alert_curve.csv"),
+				    Typed = Table.TransformColumnTypes(Source, {{"ReviewPct", type number}, {"Alerts", Int64.Type}, {"FraudsCaught", Int64.Type}, {"Recall", type number}, {"Precision", type number}, {"FraudAmountCaught", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

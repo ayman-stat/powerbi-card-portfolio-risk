@@ -1,0 +1,134 @@
+/// 30,000 credit-card holders (UCI, Taiwan 2005) with segment, PD score and default in Oct 2005.
+table Cardholder
+
+	column CardholderKey
+		dataType: int64
+		isKey
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: CardholderKey
+
+	column CreditLimit
+		dataType: double
+		isHidden
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: CreditLimit
+
+	column Default
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Default
+
+	/// Credit line, NT$
+	column LimitBand
+		dataType: string
+		summarizeBy: none
+		sourceColumn: LimitBand
+		sortByColumn: LimitBandOrder
+
+	column AgeBand
+		dataType: string
+		summarizeBy: none
+		sourceColumn: AgeBand
+
+	column Education
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Education
+
+	/// Behaviour over the last three statements
+	column Segment
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Segment
+		sortByColumn: SegmentOrder
+
+	column LimitBandOrder
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: LimitBandOrder
+
+	column SegmentOrder
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: SegmentOrder
+
+	column Utilisation
+		dataType: double
+		isHidden
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: Utilisation
+
+	/// Sep balance / credit line
+	column UtilisationBand
+		dataType: string
+		summarizeBy: none
+		sourceColumn: UtilisationBand
+		sortByColumn: UtilisationBandOrder
+
+	column UtilisationBandOrder
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: UtilisationBandOrder
+
+	column ExposureAtDefault
+		dataType: double
+		isHidden
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: ExposureAtDefault
+
+	column PD
+		dataType: double
+		isHidden
+		formatString: 0.0%
+		summarizeBy: none
+		sourceColumn: PD
+
+	/// Behaviour score: 600 at 50:1 good:bad odds, +20 points doubles the odds
+	column Score
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Score
+
+	column ScoreBand
+		dataType: string
+		summarizeBy: none
+		sourceColumn: ScoreBand
+		sortByColumn: ScoreBandOrder
+
+	column ScoreBandOrder
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: ScoreBandOrder
+
+	/// Train (70%) or hold-out Test (30%)
+	column Sample
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Sample
+
+	partition Cardholder = m
+		mode: import
+		source =
+				let
+				    Source = fnLoadCsv("dim_cardholder.csv"),
+				    Typed = Table.TransformColumnTypes(Source, {{"CardholderKey", Int64.Type}, {"CreditLimit", type number}, {"Default", Int64.Type}, {"LimitBand", type text}, {"AgeBand", type text}, {"Education", type text}, {"Segment", type text}, {"LimitBandOrder", Int64.Type}, {"SegmentOrder", Int64.Type}, {"Utilisation", type number}, {"UtilisationBand", type text}, {"UtilisationBandOrder", Int64.Type}, {"ExposureAtDefault", type number}, {"PD", type number}, {"Score", Int64.Type}, {"ScoreBand", type text}, {"ScoreBandOrder", Int64.Type}, {"Sample", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

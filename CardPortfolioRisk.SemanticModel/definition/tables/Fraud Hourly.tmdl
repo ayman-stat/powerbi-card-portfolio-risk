@@ -1,0 +1,59 @@
+/// All 284,807 transactions aggregated by day, hour, amount band and class.
+table 'Fraud Hourly'
+
+	column Day
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Day
+
+	column Hour
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Hour
+
+	/// Transaction amount, EUR
+	column AmountBand
+		dataType: string
+		summarizeBy: none
+		sourceColumn: AmountBand
+		sortByColumn: AmountBandOrder
+
+	column IsFraud
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: IsFraud
+
+	column Transactions
+		dataType: int64
+		isHidden
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Transactions
+
+	column Amount
+		dataType: double
+		isHidden
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Amount
+
+	column AmountBandOrder
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: AmountBandOrder
+
+	partition 'Fraud Hourly' = m
+		mode: import
+		source =
+				let
+				    Source = fnLoadCsv("fact_fraud_hourly.csv"),
+				    Typed = Table.TransformColumnTypes(Source, {{"Day", type text}, {"Hour", Int64.Type}, {"AmountBand", type text}, {"IsFraud", Int64.Type}, {"Transactions", Int64.Type}, {"Amount", type number}, {"AmountBandOrder", Int64.Type}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

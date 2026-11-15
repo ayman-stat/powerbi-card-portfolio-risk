@@ -1,0 +1,31 @@
+/// Statement months, Apr - Sep 2005.
+table Month
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: mmm yyyy
+		summarizeBy: none
+		sourceColumn: [Date]
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Month
+		dataType: string
+		summarizeBy: none
+		sourceColumn: [Month]
+		sortByColumn: 'Month Sort'
+
+	column 'Month Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: [Month Sort]
+
+	partition Month = calculated
+		mode: import
+		source =
+				ADDCOLUMNS(FILTER(CALENDAR(DATE(2005, 4, 1), DATE(2005, 9, 30)), DAY([Date]) = 1),
+				    "Month", FORMAT([Date], "MMM yyyy"), "Month Sort", YEAR([Date]) * 100 + MONTH([Date]))
+

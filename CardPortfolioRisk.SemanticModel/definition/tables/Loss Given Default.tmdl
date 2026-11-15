@@ -1,0 +1,13 @@
+table 'Loss Given Default'
+
+	column 'Loss Given Default'
+		dataType: double
+		formatString: 0%
+		summarizeBy: none
+		sourceColumn: [Loss Given Default]
+
+	partition 'Loss Given Default' = calculated
+		mode: import
+		source =
+				DATATABLE("Loss Given Default", DOUBLE, {{0.6}, {0.75}, {0.9}})
+

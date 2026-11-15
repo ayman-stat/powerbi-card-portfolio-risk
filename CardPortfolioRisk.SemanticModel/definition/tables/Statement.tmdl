@@ -1,0 +1,63 @@
+/// Fact: one row per cardholder per monthly statement (180,000 rows). NT$.
+table Statement
+
+	column CardholderKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: CardholderKey
+
+	column Month
+		dataType: dateTime
+		isHidden
+		formatString: mmm yyyy
+		summarizeBy: none
+		sourceColumn: Month
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Bucket
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: Bucket
+
+	column Delinquent
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Delinquent
+
+	column Balance
+		dataType: double
+		isHidden
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Balance
+
+	column Payment
+		dataType: double
+		isHidden
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Payment
+
+	column Limit
+		dataType: double
+		isHidden
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Limit
+
+	partition Statement = m
+		mode: import
+		source =
+				let
+				    Source = fnLoadCsv("fact_statement.csv"),
+				    Typed = Table.TransformColumnTypes(Source, {{"CardholderKey", Int64.Type}, {"Month", type date}, {"Bucket", type text}, {"Delinquent", Int64.Type}, {"Balance", type number}, {"Payment", type number}, {"Limit", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

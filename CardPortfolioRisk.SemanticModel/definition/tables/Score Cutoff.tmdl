@@ -1,0 +1,14 @@
+table 'Score Cutoff'
+
+	/// Accounts scoring below this get a line review
+	column 'Score Cutoff'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: [Score Cutoff]
+
+	partition 'Score Cutoff' = calculated
+		mode: import
+		source =
+				DATATABLE("Score Cutoff", INTEGER, {{450}, {475}, {500}, {525}, {550}, {575}, {600}})
+

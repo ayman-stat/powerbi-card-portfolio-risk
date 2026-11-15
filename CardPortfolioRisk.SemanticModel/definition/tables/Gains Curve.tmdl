@@ -1,0 +1,33 @@
+table 'Gains Curve'
+
+	/// Riskiest accounts actioned, %
+	column AccountsPct
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: AccountsPct
+
+	column DefaultsCapturedPct
+		dataType: double
+		isHidden
+		formatString: 0.0
+		summarizeBy: none
+		sourceColumn: DefaultsCapturedPct
+
+	column RandomPct
+		dataType: double
+		isHidden
+		formatString: 0.0
+		summarizeBy: none
+		sourceColumn: RandomPct
+
+	partition 'Gains Curve' = m
+		mode: import
+		source =
+				let
+				    Source = fnLoadCsv("pd_gains_curve.csv"),
+				    Typed = Table.TransformColumnTypes(Source, {{"AccountsPct", Int64.Type}, {"DefaultsCapturedPct", type number}, {"RandomPct", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

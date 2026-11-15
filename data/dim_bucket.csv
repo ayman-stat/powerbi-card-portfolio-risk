@@ -1,0 +1,7 @@
+Bucket,BucketOrder
+No use,1
+Paid in full,2
+Revolving,3
+1 month late,4
+2 months late,5
+3+ months late,6

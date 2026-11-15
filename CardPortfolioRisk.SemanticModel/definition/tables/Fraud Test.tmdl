@@ -1,0 +1,54 @@
+/// Fact: the 124,960 transactions in the forward test window (last ~17 hours) with their fraud score.
+table 'Fraud Test'
+
+	column TxnKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: TxnKey
+
+	column Hour
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: Hour
+
+	column Amount
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		summarizeBy: none
+		sourceColumn: Amount
+
+	column IsFraud
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: IsFraud
+
+	column Score
+		dataType: double
+		isHidden
+		formatString: 0.0000
+		summarizeBy: none
+		sourceColumn: Score
+
+	column ReviewPctile
+		dataType: double
+		isHidden
+		formatString: 0.0
+		summarizeBy: none
+		sourceColumn: ReviewPctile
+
+	partition 'Fraud Test' = m
+		mode: import
+		source =
+				let
+				    Source = fnLoadCsv("fact_fraud_test.csv"),
+				    Typed = Table.TransformColumnTypes(Source, {{"TxnKey", Int64.Type}, {"Hour", Int64.Type}, {"Amount", type number}, {"IsFraud", Int64.Type}, {"Score", type number}, {"ReviewPctile", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

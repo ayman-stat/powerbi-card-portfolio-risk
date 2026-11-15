@@ -1,0 +1,57 @@
+/// Fact: month-to-month transitions between repayment statuses.
+table 'Roll Rate'
+
+	/// Status last month
+	column From
+		dataType: string
+		summarizeBy: none
+		sourceColumn: From
+		sortByColumn: FromOrder
+
+	/// Status this month
+	column To
+		dataType: string
+		summarizeBy: none
+		sourceColumn: To
+		sortByColumn: ToOrder
+
+	column Cardholders
+		dataType: int64
+		isHidden
+		formatString: #,0
+		summarizeBy: none
+		sourceColumn: Cardholders
+
+	column Month
+		dataType: dateTime
+		isHidden
+		formatString: mmm yyyy
+		summarizeBy: none
+		sourceColumn: Month
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column FromOrder
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: FromOrder
+
+	column ToOrder
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: ToOrder
+
+	partition 'Roll Rate' = m
+		mode: import
+		source =
+				let
+				    Source = fnLoadCsv("fact_roll_rate.csv"),
+				    Typed = Table.TransformColumnTypes(Source, {{"From", type text}, {"To", type text}, {"Cardholders", Int64.Type}, {"Month", type date}, {"FromOrder", Int64.Type}, {"ToOrder", Int64.Type}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

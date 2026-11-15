@@ -1,0 +1,14 @@
+table 'Review Share'
+
+	/// Share of transactions the fraud team can review
+	column 'Review Share'
+		dataType: double
+		formatString: 0.00"%"
+		summarizeBy: none
+		sourceColumn: [Review Share]
+
+	partition 'Review Share' = calculated
+		mode: import
+		source =
+				DATATABLE("Review Share", DOUBLE, {{0.05}, {0.1}, {0.2}, {0.5}, {1}, {2}, {5}})
+

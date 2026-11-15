@@ -1,0 +1,26 @@
+table Bucket
+
+	/// Repayment status on the statement
+	column Bucket
+		dataType: string
+		summarizeBy: none
+		sourceColumn: Bucket
+		sortByColumn: BucketOrder
+
+	column BucketOrder
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: BucketOrder
+
+	partition Bucket = m
+		mode: import
+		source =
+				let
+				    Source = fnLoadCsv("dim_bucket.csv"),
+				    Typed = Table.TransformColumnTypes(Source, {{"Bucket", type text}, {"BucketOrder", Int64.Type}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

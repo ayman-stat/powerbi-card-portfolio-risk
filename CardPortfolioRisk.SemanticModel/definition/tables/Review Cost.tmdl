@@ -1,0 +1,14 @@
+table 'Review Cost'
+
+	/// Cost of reviewing one alert, EUR
+	column 'Review Cost'
+		dataType: double
+		formatString: €0
+		summarizeBy: none
+		sourceColumn: [Review Cost]
+
+	partition 'Review Cost' = calculated
+		mode: import
+		source =
+				DATATABLE("Review Cost", DOUBLE, {{2}, {5}, {10}, {20}})
+
