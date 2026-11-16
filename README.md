@@ -1,5 +1,7 @@
 # Card Portfolio & Risk
 
+[![ci](https://github.com/ayman-stat/powerbi-card-portfolio-risk/actions/workflows/ci.yml/badge.svg)](https://github.com/ayman-stat/powerbi-card-portfolio-risk/actions/workflows/ci.yml)
+
 The analysis a card network's advisory team delivers to an issuing bank: portfolio health, roll rates, a behavioural PD scorecard, a credit-line policy simulator and a fraud alert-budget simulator.
 
 **Domain:** Payments / cards / credit risk  ·  **Built with:** Power BI Desktop (PBIP, PBIR, TMDL), DAX, Python  ·  **Author:** [Mohamed Ayman](https://mohamedaymanstat.vercel.app)
