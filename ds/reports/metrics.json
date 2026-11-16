@@ -1,0 +1,479 @@
+{
+  "01_eda": {
+    "credit_rows": 30000,
+    "default_rate": 0.2212,
+    "default_rate_2_months_late_sep": 0.691414,
+    "monthly_cure_rate_past_due": 0.237808,
+    "iv_top": {
+      "status_1": 0.869689,
+      "months_late": 0.861938,
+      "max_status": 0.783471,
+      "status_2": 0.542368,
+      "status_3": 0.410883
+    },
+    "proxy_auc_sex_from_behaviour": 0.607494,
+    "proxy_r2_age_from_behaviour": 0.03606,
+    "fraud_rows": 284807,
+    "fraud_frauds": 492,
+    "fraud_rate": 0.001727,
+    "fraud_duplicate_rows": 1081,
+    "fraud_max_psi_day1_day2": 1.5663
+  },
+  "02_pd_scorecard": {
+    "parity": {
+      "Champion AUC, test": {
+        "published": 0.7762,
+        "reproduced": 0.776203
+      },
+      "Champion AUC, train": {
+        "published": 0.8095,
+        "reproduced": 0.809512
+      },
+      "Logistic AUC, test": {
+        "published": 0.7404,
+        "reproduced": 0.740154
+      },
+      "KS, test": {
+        "published": 0.4214,
+        "reproduced": 0.421365
+      },
+      "Gini, test": {
+        "published": 0.5524,
+        "reproduced": 0.552406
+      },
+      "Default rate": {
+        "published": 0.2212,
+        "reproduced": 0.2212
+      }
+    },
+    "cv_auc": {
+      "Rule: September status": 0.7146,
+      "WoE scorecard": 0.7639,
+      "Logistic (ETL)": 0.7534,
+      "Logistic (standardised)": 0.7533,
+      "HistGB champion (ETL)": 0.7869,
+      "LightGBM monotone (challenger)": 0.7879,
+      "LightGBM unconstrained": 0.7883
+    },
+    "cv_auc_sd": {
+      "Rule: September status": 0.0046,
+      "WoE scorecard": 0.0108,
+      "Logistic (ETL)": 0.0115,
+      "Logistic (standardised)": 0.0118,
+      "HistGB champion (ETL)": 0.0092,
+      "LightGBM monotone (challenger)": 0.0098,
+      "LightGBM unconstrained": 0.0095
+    },
+    "test": {
+      "Rule: September status": {
+        "auc": 0.7004,
+        "auc_ci": "0.687 - 0.715",
+        "gini": 0.4008,
+        "ks": 0.3599,
+        "brier": 0.1431
+      },
+      "WoE scorecard": {
+        "auc": 0.746,
+        "auc_ci": "0.732 - 0.758",
+        "gini": 0.492,
+        "ks": 0.3982,
+        "brier": 0.1399
+      },
+      "Logistic (ETL)": {
+        "auc": 0.7402,
+        "auc_ci": "0.726 - 0.753",
+        "gini": 0.4804,
+        "ks": 0.3909,
+        "brier": 0.1433
+      },
+      "Logistic (standardised)": {
+        "auc": 0.74,
+        "auc_ci": "0.725 - 0.753",
+        "gini": 0.48,
+        "ks": 0.39,
+        "brier": 0.1433
+      },
+      "HistGB champion (ETL)": {
+        "auc": 0.7762,
+        "auc_ci": "0.764 - 0.788",
+        "gini": 0.5524,
+        "ks": 0.4214,
+        "brier": 0.1357
+      },
+      "LightGBM monotone (challenger)": {
+        "auc": 0.7782,
+        "auc_ci": "0.765 - 0.789",
+        "gini": 0.5564,
+        "ks": 0.4238,
+        "brier": 0.1355
+      },
+      "LightGBM unconstrained": {
+        "auc": 0.7797,
+        "auc_ci": "0.767 - 0.791",
+        "gini": 0.5594,
+        "ks": 0.4297,
+        "brier": 0.1352
+      }
+    },
+    "paired_tests": {
+      "LightGBM monotone - champion": {
+        "delta_auc": 0.001952,
+        "ci_low": 1.2e-05,
+        "ci_high": 0.003875,
+        "p_value_one_sided": 0.024
+      },
+      "LightGBM unconstrained - LightGBM monotone": {
+        "delta_auc": 0.001556,
+        "ci_low": 0.000316,
+        "ci_high": 0.002791,
+        "p_value_one_sided": 0.005
+      },
+      "Champion - WoE scorecard": {
+        "delta_auc": 0.030214,
+        "ci_low": 0.02323,
+        "ci_high": 0.037184,
+        "p_value_one_sided": 0.0
+      },
+      "WoE scorecard - Logistic (standardised)": {
+        "delta_auc": 0.006029,
+        "ci_low": 0.000833,
+        "ci_high": 0.011166,
+        "p_value_one_sided": 0.009
+      },
+      "Champion - Rule: September status": {
+        "delta_auc": 0.075758,
+        "ci_low": 0.065105,
+        "ci_high": 0.086908,
+        "p_value_one_sided": 0.0
+      }
+    },
+    "scorecard_characteristics": [
+      "status_1",
+      "max_status",
+      "limit",
+      "avg_payratio",
+      "payratio_1",
+      "util_trend"
+    ],
+    "cutoff_525": {
+      "share_of_accounts": 0.305222,
+      "share_of_defaults": 0.630337,
+      "share_of_expected_loss": 0.544359,
+      "bad_rate_actioned": 0.456862,
+      "bad_rate_kept": 0.117704,
+      "good_accounts_actioned": 1492
+    },
+    "same_volume_defaults_caught": {
+      "Rule: September status": 0.562029,
+      "WoE scorecard": 0.60673,
+      "Logistic (standardised)": 0.605224,
+      "HistGB champion (ETL)": 0.630337,
+      "LightGBM monotone (challenger)": 0.630839
+    },
+    "fairness_min_air": 0.812446,
+    "fairness": {
+      "Sex: Female": {
+        "kept_rate": 0.704065,
+        "air": 1.0,
+        "auc": 0.7828
+      },
+      "Sex: Male": {
+        "kept_rate": 0.680606,
+        "air": 0.966681,
+        "auc": 0.7662
+      },
+      "Age band: Under 25": {
+        "kept_rate": 0.581047,
+        "air": 0.812446,
+        "auc": 0.7749
+      },
+      "Age band: 25-34": {
+        "kept_rate": 0.707988,
+        "air": 0.989939,
+        "auc": 0.7749
+      },
+      "Age band: 35-44": {
+        "kept_rate": 0.715183,
+        "air": 1.0,
+        "auc": 0.775
+      },
+      "Age band: 45-54": {
+        "kept_rate": 0.689708,
+        "air": 0.96438,
+        "auc": 0.7752
+      },
+      "Age band: 55+": {
+        "kept_rate": 0.66967,
+        "air": 0.936361,
+        "auc": 0.7857
+      }
+    },
+    "lgbm_best_params": {
+      "subsample_freq": 1,
+      "random_state": 42,
+      "verbose": -1,
+      "n_jobs": 4,
+      "n_estimators": 200,
+      "learning_rate": 0.028705,
+      "num_leaves": 11,
+      "min_child_samples": 27,
+      "subsample": 0.662991,
+      "colsample_bytree": 0.645132,
+      "reg_lambda": 5.035657,
+      "monotone_constraints_method": "advanced"
+    }
+  },
+  "03_fraud_model": {
+    "parity": {
+      "test transactions": {
+        "published": 124960.0,
+        "reproduced": 124960.0
+      },
+      "test frauds": {
+        "published": 136.0,
+        "reproduced": 136.0
+      },
+      "test hours": {
+        "published": 16.6,
+        "reproduced": 16.6
+      },
+      "PR AUC": {
+        "published": 0.7416,
+        "reproduced": 0.741637
+      },
+      "ROC AUC": {
+        "published": 0.9785,
+        "reproduced": 0.978545
+      },
+      "recall, top 0.1%": {
+        "published": 0.7647,
+        "reproduced": 0.764706
+      },
+      "precision, top 0.1%": {
+        "published": 0.8387,
+        "reproduced": 0.83871
+      },
+      "recall, top 0.2%": {
+        "published": 0.8088,
+        "reproduced": 0.808824
+      },
+      "precision, top 0.2%": {
+        "published": 0.4418,
+        "reproduced": 0.441767
+      },
+      "recall, top 0.5%": {
+        "published": 0.8456,
+        "reproduced": 0.845588
+      },
+      "precision, top 0.5%": {
+        "published": 0.1843,
+        "reproduced": 0.184295
+      },
+      "recall, top 1.0%": {
+        "published": 0.8603,
+        "reproduced": 0.860294
+      },
+      "precision, top 1.0%": {
+        "published": 0.0937,
+        "reproduced": 0.093675
+      }
+    },
+    "cv": {
+      "Rule: amount": {
+        "pr_auc": 0.008,
+        "pr_auc_sd": 0.0046,
+        "auc": 0.5031
+      },
+      "Rule: best single component": {
+        "pr_auc": 0.6444,
+        "pr_auc_sd": 0.1057,
+        "auc": 0.9381
+      },
+      "Logistic regression": {
+        "pr_auc": 0.7115,
+        "pr_auc_sd": 0.0565,
+        "auc": 0.9506
+      },
+      "HistGB champion (ETL)": {
+        "pr_auc": 0.799,
+        "pr_auc_sd": 0.042,
+        "auc": 0.9665
+      },
+      "HistGB, no class weight": {
+        "pr_auc": 0.8226,
+        "pr_auc_sd": 0.034,
+        "auc": 0.9754
+      },
+      "LightGBM (challenger)": {
+        "pr_auc": 0.8223,
+        "pr_auc_sd": 0.035,
+        "auc": 0.9768
+      },
+      "LightGBM, weight 448 (balanced)": {
+        "pr_auc": 0.8125,
+        "pr_auc_sd": 0.0479,
+        "auc": 0.957
+      }
+    },
+    "test": {
+      "Rule: amount": {
+        "pr_auc": 0.0036,
+        "pr_auc_ci": "0.002 - 0.006",
+        "auc": 0.5617,
+        "auc_ci": "0.488 - 0.628"
+      },
+      "Rule: best single component": {
+        "pr_auc": 0.582,
+        "pr_auc_ci": "0.505 - 0.681",
+        "auc": 0.936,
+        "auc_ci": "0.899 - 0.967"
+      },
+      "Logistic regression": {
+        "pr_auc": 0.638,
+        "pr_auc_ci": "0.550 - 0.723",
+        "auc": 0.9721,
+        "auc_ci": "0.957 - 0.988"
+      },
+      "HistGB champion (ETL)": {
+        "pr_auc": 0.7416,
+        "pr_auc_ci": "0.652 - 0.825",
+        "auc": 0.9785,
+        "auc_ci": "0.966 - 0.990"
+      },
+      "HistGB, no class weight": {
+        "pr_auc": 0.7628,
+        "pr_auc_ci": "0.691 - 0.828",
+        "auc": 0.9786,
+        "auc_ci": "0.966 - 0.989"
+      },
+      "LightGBM (challenger)": {
+        "pr_auc": 0.7897,
+        "pr_auc_ci": "0.716 - 0.854",
+        "auc": 0.9849,
+        "auc_ci": "0.977 - 0.992"
+      },
+      "LightGBM, weight 20": {
+        "pr_auc": 0.7762,
+        "pr_auc_ci": "0.705 - 0.839",
+        "auc": 0.9822,
+        "auc_ci": "0.973 - 0.990"
+      },
+      "LightGBM, weight 448 (balanced)": {
+        "pr_auc": 0.7784,
+        "pr_auc_ci": "0.701 - 0.844",
+        "auc": 0.9571,
+        "auc_ci": "0.931 - 0.977"
+      }
+    },
+    "recall_at_0.1pct_ci": {
+      "HistGB champion (ETL)": [
+        0.764706,
+        0.694669,
+        0.808824
+      ],
+      "LightGBM (challenger)": [
+        0.764706,
+        0.698529,
+        0.830882
+      ],
+      "Logistic regression": [
+        0.610294,
+        0.540257,
+        0.676471
+      ]
+    },
+    "paired_tests": {
+      "PR AUC: challenger - champion": {
+        "delta": 0.048081,
+        "ci_low": 0.009072,
+        "ci_high": 0.089856,
+        "p_one_sided": 0.0
+      },
+      "Recall at 0.1%: challenger - champion": {
+        "delta": 0.0,
+        "ci_low": -0.022059,
+        "ci_high": 0.058824,
+        "p_one_sided": 0.34
+      },
+      "PR AUC: champion - logistic": {
+        "delta": 0.103598,
+        "ci_low": 0.036046,
+        "ci_high": 0.164032,
+        "p_one_sided": 0.0
+      },
+      "PR AUC: champion - unweighted HistGB": {
+        "delta": -0.021208,
+        "ci_low": -0.065313,
+        "ci_high": 0.022916,
+        "p_one_sided": 0.79
+      }
+    },
+    "cost_threshold": {
+      "cost_per_alert": 5,
+      "handling_per_fraud": 20,
+      "best_share": 0.001472,
+      "best_alerts": 184,
+      "net_at_best": 14644.07,
+      "net_at_0.1pct": 14028.46
+    },
+    "calibration": {
+      "Champion, raw (weighted 20x)": {
+        "expected frauds (sum of p)": 436.356275,
+        "observed frauds": 136.0,
+        "Brier": 0.000503,
+        "log loss": 0.004181,
+        "PR AUC": 0.741637
+      },
+      "Champion, weight undone": {
+        "expected frauds (sum of p)": 86.744297,
+        "observed frauds": 136.0,
+        "Brier": 0.000466,
+        "log loss": 0.002555,
+        "PR AUC": 0.741637
+      },
+      "LightGBM challenger (unweighted)": {
+        "expected frauds (sum of p)": 145.892016,
+        "observed frauds": 136.0,
+        "Brier": 0.000337,
+        "log loss": 0.002121,
+        "PR AUC": 0.789719
+      }
+    },
+    "drift": {
+      "ETL window (31.4 h, incl. 7.4 h of day 2)": {
+        "training rows": 159847.0,
+        "training frauds": 356.0,
+        "PR AUC": 0.741637,
+        "recall @ 0.1%": 0.764706,
+        "precision @ 0.1%": 0.83871
+      },
+      "Day 1 only (24 h)": {
+        "training rows": 144786.0,
+        "training frauds": 281.0,
+        "PR AUC": 0.761461,
+        "recall @ 0.1%": 0.75,
+        "precision @ 0.1%": 0.822581
+      },
+      "Day 1 only, V3 dropped": {
+        "training rows": 144786.0,
+        "training frauds": 281.0,
+        "PR AUC": 0.742441,
+        "recall @ 0.1%": 0.742647,
+        "precision @ 0.1%": 0.814516
+      }
+    },
+    "lgbm_best_params": {
+      "subsample_freq": 1,
+      "random_state": 42,
+      "verbose": -1,
+      "n_jobs": 4,
+      "n_estimators": 400,
+      "learning_rate": 0.035226,
+      "num_leaves": 30,
+      "min_child_samples": 30,
+      "subsample": 0.920879,
+      "colsample_bytree": 0.537275,
+      "reg_lambda": 17.564279
+    }
+  }
+}

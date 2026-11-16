@@ -37,6 +37,14 @@ The analysis a card network's advisory team delivers to an issuing bank: portfol
 - PD: gradient boosting on six months of repayment status, utilisation and payment ratios; scores scaled to 600 points at 50:1 odds, 20 points to double.
 - Fraud: gradient boosting trained on the first ~31 hours, tested on the next ~17 hours; ROC AUC 0.98, PR AUC 0.74 (fraud is 0.17% of transactions).
 
+## Data science
+
+Three notebooks rebuild both models from the raw data, reproduce the published numbers exactly, then challenge them. Full results, figures and the model card: [ds/README.md](ds/README.md).
+
+- [01 · EDA](ds/notebooks/01_eda_credit_and_fraud.ipynb): undocumented status codes decoded, roll rates, information value, a proxy check on protected attributes, and a step change at midnight in the fraud data.
+- [02 · PD scorecard](ds/notebooks/02_pd_scorecard.ipynb): a 6-characteristic WoE points scorecard (AUC 0.746) and a monotone LightGBM challenger (0.778, level with the 0.776 champion); the 525 cutoff, fairness by sex and age band, SHAP reason codes.
+- [03 · Fraud model](ds/notebooks/03_fraud_model.ipynb): an unweighted LightGBM challenger (PR AUC 0.790 vs 0.742), a review share chosen on money (0.15%), calibration on rare events and a drift test.
+
 ## Design
 
 - Identity: **Card risk**: graphite header with a segmented page control, cobalt and coral, KPIs in a left column so charts get the full height.
